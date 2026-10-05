@@ -48,14 +48,23 @@ jobs:
           set -euo pipefail
           base="${VITE_BASE_PATH}"
           echo "expected base: $base"
+          # The base is a URL prefix, not a dist directory: assets stay at dist/assets.
           grep -q "href=\"${base}assets/" dist/index.html \
             || grep -q "src=\"${base}assets/" dist/index.html \
             || { echo "FAIL: dist/index.html does not reference ${base}assets/"; exit 1; }
-          test -f "dist/${base}cv/Rahma-Jlassi-CV.pdf" \
-            || { echo "FAIL: CV missing from dist/${base}cv/"; exit 1; }
-          test -f "dist/${base}og-image.png" \
-            || { echo "FAIL: og-image.png missing from dist/${base}"; exit 1; }
-          echo "OK: assets, CV and og-image present under ${base}"
+          # The CV link is built from import.meta.env.BASE_URL at build time, so the
+          # base must be inlined as a literal in the JS bundle (not left unresolved).
+          grep -q -- "\"${base}\"" dist/assets/*.js \
+            || { echo "FAIL: base ${base} was not inlined into the JS bundle"; exit 1; }
+          grep -q "import.meta.env" dist/assets/*.js \
+            && { echo "FAIL: unresolved import.meta.env left in the bundle"; exit 1; }
+          test -f dist/cv/Rahma-Jlassi-CV.pdf \
+            || { echo "FAIL: dist/cv/Rahma-Jlassi-CV.pdf is missing"; exit 1; }
+          test -f dist/og-image.png \
+            || { echo "FAIL: dist/og-image.png is missing"; exit 1; }
+          test -f dist/.nojekyll \
+            || { echo "FAIL: dist/.nojekyll is missing"; exit 1; }
+          echo "OK: base, CV, og-image and .nojekyll all present"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

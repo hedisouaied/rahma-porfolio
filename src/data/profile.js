@@ -5,6 +5,12 @@
  * `decorative` below and is explicitly labelled as illustrative in the UI.
  */
 
+/* Vite injects import.meta.env at build time (BASE_URL is "/" on a custom
+   domain, "/<repo>/" on a GitHub Pages project site). The plain-Node CV
+   generator in scripts/build-cv.mjs also imports this file and has no
+   import.meta.env, so guard it and fall back to the site root. */
+const assetBase = typeof import.meta.env === 'undefined' ? '/' : import.meta.env.BASE_URL
+
 export const identity = {
   firstName: 'Rahma',
   lastName: 'Jlassi',
@@ -23,7 +29,7 @@ export const identity = {
   linkedinHref: 'https://www.linkedin.com/in/rahma-jlassi/',
   cv: {
     label: 'Download CV',
-    href: `${import.meta.env.BASE_URL}cv/Rahma-Jlassi-CV.pdf`,
+    href: `${assetBase}cv/Rahma-Jlassi-CV.pdf`,
     fileName: 'Rahma-Jlassi-CV.pdf',
   },
 }
