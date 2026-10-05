@@ -8,6 +8,7 @@
 
   /* Surfaces */
   --bg: #08090b;
+  --boot-bg: #08090b;
   --bg-soft: #0d0f12;
   --surface: #111317;
   --surface-light: #17191e;
@@ -71,6 +72,7 @@
   color-scheme: light;
 
   --bg: #f3f2f6;
+  --boot-bg: #f3f2f6;
   --bg-soft: #ecebf1;
   --surface: #ffffff;
   --surface-light: #f7f6fa;
@@ -85,10 +87,10 @@
   --line-strong: rgba(18, 18, 23, 0.18);
   --grid-line: rgba(18, 18, 23, 0.045);
 
-  --accent: #8f5c0d;
+  --accent: #8a580c;
   --accent-ink: #ffffff;
-  --accent-soft: rgba(143, 92, 13, 0.1);
-  --accent-glow: rgba(143, 92, 13, 0.28);
+  --accent-soft: rgba(138, 88, 12, 0.1);
+  --accent-glow: rgba(138, 88, 12, 0.28);
 
   --data: #17786f;
   --data-soft: rgba(23, 120, 111, 0.12);
@@ -98,7 +100,7 @@
   --shadow: 0 30px 70px -35px rgba(40, 30, 90, 0.35);
   --shadow-soft: 0 16px 34px -22px rgba(40, 30, 90, 0.3);
   --vignette: rgba(243, 242, 246, 0.7);
-  --portrait-glow: rgba(143, 92, 13, 0.3);
+  --portrait-glow: rgba(138, 88, 12, 0.3);
 
   --stage-1: #12756c;
   --stage-2: #2b7f6a;

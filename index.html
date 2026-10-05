@@ -46,8 +46,8 @@
         } catch (e) {}
         if (t !== 'light' && t !== 'dark') t = 'dark'
         document.documentElement.dataset.theme = t
-        var c = t === 'light' ? '#f3f2f6' : '#08090b'
-        document.documentElement.style.background = c
+        /* var() keeps this in sync with the theme, unlike a hard-coded colour */
+        document.documentElement.style.background = 'var(--boot-bg)'
       })()
     </script>
 
