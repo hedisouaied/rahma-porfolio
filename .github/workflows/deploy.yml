@@ -1,0 +1,74 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one deployment at a time; cancel stale runs on new pushes.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Project sites are served from https://<user>.github.io/<repo>/, so the
+      # built site needs that subpath as its base. Set the repository variable
+      # BASE_PATH to "/" first if a custom domain is ever attached.
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE_PATH: ${{ vars.BASE_PATH || format('/{0}/', github.event.repository.name) }}
+
+      - name: Verify the built base path
+        run: |
+          set -euo pipefail
+          base="${VITE_BASE_PATH}"
+          echo "expected base: $base"
+          grep -q "href=\"${base}assets/" dist/index.html \
+            || grep -q "src=\"${base}assets/" dist/index.html \
+            || { echo "FAIL: dist/index.html does not reference ${base}assets/"; exit 1; }
+          test -f "dist/${base}cv/Rahma-Jlassi-CV.pdf" \
+            || { echo "FAIL: CV missing from dist/${base}cv/"; exit 1; }
+          test -f "dist/${base}og-image.png" \
+            || { echo "FAIL: og-image.png missing from dist/${base}"; exit 1; }
+          echo "OK: assets, CV and og-image present under ${base}"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
