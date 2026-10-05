@@ -1,12 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+/* Deployment target:
+   - custom domain / local dev  -> unset, base "/"
+   - GitHub Pages project site -> VITE_BASE_PATH="/<repo>/" (set by the deploy workflow)
+   Runtime links (the CV download) use import.meta.env.BASE_URL, so they follow
+   the base automatically. index.html link[href] assets are rewritten by Vite too. */
+const base = process.env.VITE_BASE_PATH || '/'
+
 export default defineConfig({
   plugins: [react()],
-  /* Every asset and the CV download are referenced from the site root
-     (/favicon.svg, /cv/…), so the base has to be "/" as well. For a subpath
-     deploy, change both. */
-  base: '/',
+  base,
   build: {
     target: 'es2019',
     cssTarget: 'chrome90',

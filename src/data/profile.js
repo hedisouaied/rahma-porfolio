@@ -23,7 +23,7 @@ export const identity = {
   linkedinHref: 'https://www.linkedin.com/in/rahma-jlassi/',
   cv: {
     label: 'Download CV',
-    href: '/cv/Rahma-Jlassi-CV.pdf',
+    href: `${import.meta.env.BASE_URL}cv/Rahma-Jlassi-CV.pdf`,
     fileName: 'Rahma-Jlassi-CV.pdf',
   },
 }
