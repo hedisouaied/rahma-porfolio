@@ -1,0 +1,110 @@
+/* ==========================================================================
+   Design tokens
+   Dark-first editorial system. Light theme is a full inversion, not a filter.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg: #08090b;
+  --bg-soft: #0d0f12;
+  --surface: #111317;
+  --surface-light: #17191e;
+  --glass: rgba(14, 15, 19, 0.62);
+  --glass-strong: rgba(14, 15, 19, 0.94);
+
+  /* Ink */
+  --text: #f1f1ed;
+  --text-soft: #a5a7aa;
+  --text-muted: #7a7d83;
+
+  /* Structure */
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --grid-line: rgba(255, 255, 255, 0.025);
+
+  /* Accent — warm amber (award gold). Never used as a fill behind body text. */
+  --accent: #e7b25c;
+  --accent-ink: #17130a;
+  --accent-soft: rgba(231, 178, 92, 0.14);
+  --accent-glow: rgba(231, 178, 92, 0.4);
+
+  /* Data secondary — a single cool counterweight used only in data graphics */
+  --data: #5fc9c4;
+  --data-soft: rgba(95, 201, 196, 0.14);
+  --ok: #8fd3a0;
+  --danger: #ff7a6b;
+
+  --shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7);
+  --shadow-soft: 0 18px 40px -20px rgba(0, 0, 0, 0.55);
+  --vignette: rgba(8, 9, 11, 0.78);
+  --portrait-glow: rgba(231, 178, 92, 0.4);
+
+  /* Pipeline stage hues: a deliberate teal → gold journey across the signature
+     sequence. Colour carries narrative, not decoration. */
+  --stage-1: #5fc9c4;
+  --stage-2: #6fc3b4;
+  --stage-3: #95bf9e;
+  --stage-4: #bdb884;
+  --stage-5: #dcb26e;
+  --stage-6: #e7b25c;
+  --stage-c: var(--stage-1);
+  --stage-mix: 0%;
+  --stage-ink: color-mix(in srgb, var(--stage-c), #000 var(--stage-mix));
+
+  /* Layout */
+  --max-width: 1280px;
+  --nav-height: 76px;
+  --gutter: 64px;
+
+  /* Type */
+  --font-display: 'Manrope', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f3f2f6;
+  --bg-soft: #ecebf1;
+  --surface: #ffffff;
+  --surface-light: #f7f6fa;
+  --glass: rgba(255, 255, 255, 0.66);
+  --glass-strong: rgba(255, 255, 255, 0.95);
+
+  --text: #121217;
+  --text-soft: #4a4b55;
+  --text-muted: #65666f;
+
+  --line: rgba(18, 18, 23, 0.1);
+  --line-strong: rgba(18, 18, 23, 0.18);
+  --grid-line: rgba(18, 18, 23, 0.045);
+
+  --accent: #8f5c0d;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(143, 92, 13, 0.1);
+  --accent-glow: rgba(143, 92, 13, 0.28);
+
+  --data: #17786f;
+  --data-soft: rgba(23, 120, 111, 0.12);
+  --ok: #1e8a4c;
+  --danger: #d6453a;
+
+  --shadow: 0 30px 70px -35px rgba(40, 30, 90, 0.35);
+  --shadow-soft: 0 16px 34px -22px rgba(40, 30, 90, 0.3);
+  --vignette: rgba(243, 242, 246, 0.7);
+  --portrait-glow: rgba(143, 92, 13, 0.3);
+
+  --stage-1: #12756c;
+  --stage-2: #2b7f6a;
+  --stage-3: #5c7f57;
+  --stage-4: #8a7c3c;
+  --stage-5: #a97c22;
+  --stage-6: #9a6510;
+  --stage-mix: 26%;
+}

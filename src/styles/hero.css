@@ -1,0 +1,898 @@
+/* ==========================================================================
+   Hero — oversized type, parallax field, and the swinging analyst card
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  --mouse-x: 0;
+  --mouse-y: 0;
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 80px 80px;
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 80%);
+  mask-image: linear-gradient(to bottom, #000, transparent 80%);
+}
+
+.hero-glow {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.12;
+}
+
+.hero-glow-one {
+  top: 5%;
+  right: 7%;
+  background: var(--accent);
+  transform: translate(calc(var(--mouse-x) * 35px), calc(var(--mouse-y) * 35px));
+}
+
+.hero-glow-two {
+  left: 8%;
+  bottom: 0;
+  width: 350px;
+  height: 350px;
+  background: var(--data);
+  opacity: 0.1;
+  transform: translate(calc(var(--mouse-x) * -20px), calc(var(--mouse-y) * -20px));
+}
+
+.hero-inner {
+  min-height: min(100svh, 940px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: 60px;
+  padding-block: calc(var(--nav-height) + 40px) 110px;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 3;
+  max-width: 700px;
+  min-width: 0;
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(58px, 8.6vw, 132px);
+  line-height: 0.86;
+  letter-spacing: -0.07em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.hero-title .line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+
+.hero-title .word {
+  display: inline-block;
+  will-change: transform;
+}
+
+.hero-title .accent {
+  background-image: linear-gradient(var(--accent), color-mix(in srgb, var(--accent) 55%, var(--text)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--accent);
+}
+
+.hero-role {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 11px;
+  margin-top: 30px;
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-role > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.hero-role i {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.hero-lede {
+  max-width: 540px;
+  margin-top: 24px;
+  color: var(--text-soft);
+  font-size: clamp(17px, 1.5vw, 20px);
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 45px;
+  margin: 56px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.hero-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hero-meta dt {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-meta dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------ hero visual - */
+
+.hero-visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  perspective: 1400px;
+}
+
+.hero-orbit {
+  position: absolute;
+  width: 118%;
+  aspect-ratio: 1;
+  max-width: 640px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  transform: rotateX(70deg) rotate(12deg);
+  pointer-events: none;
+}
+
+.hero-orbit::before,
+.hero-orbit::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+}
+
+.hero-orbit::before {
+  inset: 14%;
+}
+
+.hero-orbit::after {
+  inset: 30%;
+  border-style: dashed;
+  opacity: 0.6;
+}
+
+.orbit-tick {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+
+/* Lanyard + card ------------------------------------------------------- */
+
+.badge-stage {
+  --strap: 34vh;
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  margin-top: calc(var(--strap) * -0.55);
+}
+
+.badge-drop {
+  display: grid;
+  justify-items: center;
+}
+
+.badge-rig {
+  display: grid;
+  justify-items: center;
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+
+.lanyard {
+  position: relative;
+  width: 30px;
+  height: var(--strap);
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.25), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.25)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 4px), var(--accent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 30%);
+  mask-image: linear-gradient(to bottom, transparent, #000 30%);
+}
+
+.lanyard span {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  opacity: 0.8;
+}
+
+.badge-clip {
+  position: relative;
+  width: 40px;
+  height: 30px;
+  margin-top: -2px;
+  z-index: 2;
+  background: linear-gradient(180deg, #f2f2f5, #9a9aa6 55%, #d9d9e0);
+  border-radius: 6px 6px 10px 10px;
+  box-shadow: inset 0 1px #fff, 0 6px 14px #00000059;
+}
+
+.badge-clip i {
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  width: 16px;
+  height: 20px;
+  margin-left: -8px;
+  border: 3px solid #b8b8c2;
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+.badge {
+  --gx: 50%;
+  --gy: 30%;
+  --swing: 0deg;
+  position: relative;
+  width: clamp(240px, 20vw, 292px);
+  margin-top: 6px;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  transform: rotateY(var(--swing));
+  transform-style: preserve-3d;
+}
+
+.badge:active {
+  cursor: grabbing;
+}
+
+.badge:focus-visible {
+  outline: none;
+}
+
+.badge:focus-visible .badge-face {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.badge-inner {
+  position: relative;
+  display: grid;
+  transform-style: preserve-3d;
+  transition: transform 0.9s var(--ease-out);
+}
+
+.badge[data-flipped='true'] .badge-inner {
+  transform: rotateY(180deg);
+}
+
+.badge-face {
+  grid-area: 1 / 1;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 24px 16px 14px;
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 40px 90px -30px var(--portrait-glow), 0 18px 40px -20px #0000008c, inset 0 1px #ffffff14;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.badge-back {
+  transform: rotateY(180deg);
+}
+
+.badge-slot {
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  width: 46px;
+  height: 7px;
+  margin-left: -23px;
+  border-radius: 99px;
+  background: var(--bg);
+  box-shadow: inset 0 1px 3px #00000080;
+}
+
+.badge-top {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--line-strong);
+}
+
+.badge-logo {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.badge-org {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.badge-chip {
+  width: 30px;
+  height: 22px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, #e9d29a, #b8913f 45%, #f1dda8 60%, #a87f30);
+  box-shadow: inset 0 0 0 1px #00000026;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.badge-chip::before {
+  content: '';
+  position: absolute;
+  inset: 5px 7px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 2px;
+}
+
+/* The visual slot stands in for a portrait: a live miniature readout. */
+.card-visual {
+  position: relative;
+  aspect-ratio: 6 / 4;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+}
+
+.card-visual svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cv-grid line {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.cv-bar {
+  fill: var(--data);
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.cv-bar.is-accent {
+  fill: var(--accent);
+}
+
+.cv-spark {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cv-area {
+  fill: var(--accent-soft);
+}
+
+.cv-scan {
+  fill: var(--accent);
+  opacity: 0.1;
+}
+
+.cv-node {
+  fill: var(--bg);
+  stroke: var(--data);
+  stroke-width: 1.6;
+}
+
+.cv-axis {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  fill: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+.cv-corner {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--accent);
+  opacity: 0.7;
+}
+
+.cv-corner.tl {
+  top: 7px;
+  left: 7px;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.cv-corner.tr {
+  top: 7px;
+  right: 7px;
+  border-left: 0;
+  border-bottom: 0;
+}
+
+.cv-corner.bl {
+  bottom: 7px;
+  left: 7px;
+  border-right: 0;
+  border-top: 0;
+}
+
+.cv-corner.br {
+  bottom: 7px;
+  right: 7px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.card-visual-note {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 1;
+  padding: 2px 6px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.badge-status {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 99px;
+  background: #08090b8c;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #f1f1ed;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+:root[data-theme='light'] .badge-status {
+  background: #f3f2f6cc;
+  color: #121217;
+}
+
+.badge-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #92d6a6;
+  box-shadow: 0 0 8px #92d6a6;
+}
+
+.badge-who {
+  display: grid;
+  gap: 4px;
+}
+
+.badge-name {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+
+.badge-role {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.badge-team {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.badge-fields {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.badge-fields div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.badge-fields dt {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.badge-fields dd {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.badge-barcode {
+  width: 62%;
+  height: 26px;
+  fill: var(--text);
+  opacity: 0.85;
+}
+
+.badge-code {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.badge-foil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  mix-blend-mode: soft-light;
+  opacity: 0.4;
+  background: radial-gradient(circle at var(--gx) var(--gy), rgba(255, 255, 255, 0.7), transparent 38%),
+    conic-gradient(
+      from 120deg at var(--gx) var(--gy),
+      rgba(231, 178, 92, 0.5),
+      rgba(95, 201, 196, 0.4),
+      rgba(255, 155, 217, 0.4),
+      rgba(146, 214, 166, 0.4),
+      rgba(231, 178, 92, 0.5)
+    );
+  transition: opacity 0.3s;
+}
+
+.badge:hover .badge-foil {
+  opacity: 0.7;
+}
+
+.badge-back-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--line-strong);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.badge-contact {
+  display: grid;
+  gap: 10px;
+}
+
+.badge-contact li {
+  display: grid;
+  gap: 1px;
+}
+
+.badge-contact span,
+.badge-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.badge-contact b {
+  font-size: 13px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.badge-domains {
+  display: grid;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.badge-domains div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.badge-domains div span {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.badge-back-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.badge-back-foot .brand-avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.badge-back-foot div {
+  display: grid;
+}
+
+.badge-back-foot b {
+  font-size: 13px;
+}
+
+.badge-back-foot span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.badge-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ------------------------------------------------------------ hero bottom - */
+
+.hero-bottom {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(calc(100% - var(--gutter)), var(--max-width));
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hero-bottom a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 24px;
+  transition: color 0.3s ease;
+}
+
+.hero-bottom a:hover {
+  color: var(--accent);
+}
+
+.scroll-indicator {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 38px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.scroll-indicator span {
+  display: block;
+  width: 1px;
+  height: 12px;
+  background: var(--text-soft);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+
+@keyframes scrollLine {
+  0% {
+    transform: translateY(-12px);
+  }
+  to {
+    transform: translateY(38px);
+  }
+}
+
+/* ------------------------------------------------------------ responsive -- */
+
+@media (max-width: 1180px) {
+  .badge-stage {
+    --strap: 26vh;
+  }
+}
+
+@media (max-width: 960px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-block: calc(var(--nav-height) + 30px) 110px;
+  }
+
+  .hero-visual {
+    order: -1;
+  }
+
+  .badge-stage {
+    --strap: 18vh;
+    margin-top: 0;
+  }
+
+  .badge {
+    width: min(70vw, 280px);
+  }
+
+  .hero-orbit {
+    width: 130%;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-title {
+    font-size: clamp(52px, 17vw, 84px);
+  }
+
+  .hero-role {
+    font-size: 10px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    max-width: 320px;
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+  .hero-meta > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .hero-bottom > span:last-child {
+    display: none;
+  }
+
+  .hero-bottom {
+    font-size: 9px;
+  }
+}

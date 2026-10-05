@@ -1,0 +1,531 @@
+/* ==========================================================================
+   The pipeline — a sticky, scroll-driven sequence: DATA → DECISION
+   ========================================================================== */
+
+.story {
+  position: relative;
+  height: 460svh;
+}
+
+.story-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 500px) 1fr;
+  align-items: center;
+  gap: clamp(24px, 4vw, 60px);
+  padding-block: calc(var(--nav-height) + 10px) 40px;
+}
+
+.story-panel {
+  display: grid;
+  gap: 28px;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------------ rail -- */
+
+.story-rail {
+  --p: 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  padding: 0 0 14px;
+}
+
+.story-rail::before,
+.story-rail::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+}
+
+.story-rail::before {
+  right: 0;
+  background: var(--line);
+}
+
+.story-rail::after {
+  width: calc(var(--p) * 100%);
+  background: var(--stage-ink);
+  transition: width 0.2s linear;
+}
+
+.story-rail button {
+  --stage-ink: color-mix(in srgb, var(--stage-c), #000 var(--stage-mix));
+  width: 100%;
+  display: grid;
+  gap: 2px;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-muted);
+  transition: color 0.3s;
+}
+
+.story-rail button span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.story-rail button em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+.story-rail button:hover {
+  color: var(--text);
+}
+
+.story-rail button[aria-current='step'] {
+  color: var(--stage-ink);
+}
+
+.story-rail button[aria-current='step'] em {
+  opacity: 1;
+}
+
+.story-rail button:focus-visible {
+  outline-offset: 0;
+}
+
+/* ----------------------------------------------------------------- steps -- */
+
+.story-steps {
+  display: grid;
+  min-height: 300px;
+}
+
+.story-step {
+  --stage-ink: color-mix(in srgb, var(--stage-c), #000 var(--stage-mix));
+  grid-area: 1 / 1;
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  transition: opacity 0.55s var(--ease-out), transform 0.7s var(--ease-out), filter 0.55s;
+}
+
+.story-step[data-state='next'] {
+  opacity: 0;
+  transform: translateY(36px);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.story-step[data-state='past'] {
+  opacity: 0;
+  transform: translateY(-36px);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.story-step[data-state='live'] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.stage-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.stage-number {
+  font-size: clamp(56px, 6vw, 88px);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--stage-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.stage-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--stage-ink);
+}
+
+.story-step h3 {
+  font-size: clamp(30px, 3.4vw, 46px);
+  font-weight: 600;
+}
+
+.story-step p {
+  color: var(--text-soft);
+  max-width: 44ch;
+  font-size: 17px;
+}
+
+.story-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.story-tags li {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--stage-ink);
+}
+
+/* ----------------------------------------------------------------- field -- */
+
+.story-field {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: min(62svh, 560px);
+}
+
+.field-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--surface), var(--bg-soft));
+  overflow: hidden;
+}
+
+.field-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(ellipse 78% 78% at 50% 50%, #000, transparent 82%);
+  mask-image: radial-gradient(ellipse 78% 78% at 50% 50%, #000, transparent 82%);
+}
+
+/* Width-driven, then capped so the derived height never exceeds the field box.
+   Sizing from height instead would make min-content wider than the grid column
+   and push a horizontal scrollbar onto the page. */
+.field-canvas {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  aspect-ratio: 400 / 320;
+  max-width: calc(min(62svh, 560px) * 1.25);
+}
+
+.field-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.field-layer {
+  grid-area: 1 / 1;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.field-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--line-strong);
+  pointer-events: none;
+}
+
+.field-corner.tl {
+  top: 10px;
+  left: 10px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.field-corner.tr {
+  top: 10px;
+  right: 10px;
+  border-left: 0;
+  border-bottom: 0;
+}
+.field-corner.bl {
+  bottom: 10px;
+  left: 10px;
+  border-right: 0;
+  border-top: 0;
+}
+.field-corner.br {
+  bottom: 10px;
+  right: 10px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.field-meta {
+  position: absolute;
+  left: 22px;
+  top: 20px;
+  display: grid;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.field-meta b {
+  color: var(--stage-ink);
+  font-weight: 500;
+}
+
+.field-legend {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.field-legend i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--stage-ink);
+  box-shadow: 0 0 12px var(--stage-c);
+}
+
+.field-readout {
+  position: absolute;
+  right: 22px;
+  top: 20px;
+  display: grid;
+  gap: 2px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.field-readout b {
+  color: var(--text);
+  font-weight: 500;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Floating annotation labels, one per active stage */
+.field-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.field-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  will-change: transform, opacity;
+  transition: opacity 0.4s ease;
+  opacity: 0;
+}
+
+.field-label i {
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: var(--stage-ink);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--stage-c) 22%, transparent), 0 0 14px var(--stage-c);
+}
+
+.field-label b {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--glass-strong);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+  transform: translateY(-50%);
+  margin-top: -4.5px;
+  animation: labelIn 0.6s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 70ms);
+}
+
+@keyframes labelIn {
+  from {
+    opacity: 0;
+    transform: translate(-8px, -50%) scale(0.9);
+  }
+}
+
+/* ------------------------------------------------------------------ svg --- */
+
+.fg-grid line {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.fg-axis {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.fg-dot {
+  fill: var(--text-muted);
+}
+
+.fg-dot.is-live {
+  fill: var(--stage-ink);
+}
+
+.fg-link {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+  fill: none;
+}
+
+.fg-link.is-live {
+  stroke: var(--stage-c);
+}
+
+.fg-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fg-bar {
+  fill: var(--stage-ink);
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.fg-area {
+  fill: color-mix(in srgb, var(--stage-c) 12%, transparent);
+}
+
+.fg-ring {
+  fill: none;
+  stroke: var(--stage-c);
+  stroke-width: 1.4;
+}
+
+.fg-tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  fill: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.fg-outlier {
+  stroke: var(--danger);
+  stroke-width: 1.2;
+  fill: none;
+}
+
+.fg-scanline {
+  fill: var(--stage-c);
+  opacity: 0.08;
+}
+
+/* ------------------------------------------------------------ responsive -- */
+
+@media (max-width: 1080px) {
+  .story-sticky {
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 20px;
+    padding-block: calc(var(--nav-height) + 6px) 28px;
+  }
+
+  .story-field {
+    height: min(38svh, 320px);
+    order: -1;
+  }
+
+  .field-canvas {
+    max-width: calc(min(38svh, 320px) * 1.25);
+  }
+
+  .story-steps {
+    min-height: 0;
+  }
+
+  .story-panel {
+    background: var(--glass-strong);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 18px 18px 20px;
+    gap: 16px;
+  }
+
+  .story-step p {
+    font-size: 15px;
+  }
+
+  .stage-number {
+    font-size: 46px;
+  }
+
+  .story-rail em,
+  .field-labels {
+    display: none;
+  }
+
+  .field-legend,
+  .field-readout {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .story {
+    height: 400svh;
+  }
+
+  .story-rail {
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 8px;
+  }
+
+  .story-rail::before,
+  .story-rail::after {
+    display: none;
+  }
+}

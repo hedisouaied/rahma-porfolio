@@ -1,0 +1,324 @@
+/* ==========================================================================
+   Skills — conceptual chains plus an editorial index
+   ========================================================================== */
+
+.chains {
+  display: grid;
+  gap: 10px;
+  margin-bottom: clamp(44px, 5vw, 66px);
+}
+
+.chain {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  overflow: hidden;
+  transition: border-color 0.45s ease, background 0.45s ease;
+}
+
+.chain[data-on='true'] {
+  border-color: var(--line-strong);
+  background: var(--surface);
+}
+
+.chain-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 20px;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.chain-head b {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.chain-head i {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.chain-head em {
+  font-style: normal;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s ease;
+}
+
+.chain-head em::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.chain[data-on='true'] .chain-head em {
+  color: var(--text);
+}
+
+.chain[data-on='true'] .chain-head em::after {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.chain-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.7s var(--ease-out);
+}
+
+.chain[data-on='true'] .chain-body {
+  grid-template-rows: 1fr;
+}
+
+.chain-body > div {
+  overflow: hidden;
+}
+
+.chain-flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 4px 20px 24px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chain-flow::-webkit-scrollbar {
+  display: none;
+}
+
+.node {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 118px;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 16px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--bg-soft);
+  opacity: 0.32;
+  transform: translateY(12px);
+  transition: opacity 0.5s var(--ease-out), transform 0.6s var(--ease-out),
+    border-color 0.4s ease, background 0.4s ease;
+}
+
+.chain[data-on='true'] .node {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(0.1s + var(--i) * 0.08s);
+}
+
+.node:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.node span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.node b {
+  font-size: clamp(13px, 1.2vw, 15px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.node.is-outcome b {
+  color: var(--accent);
+}
+
+/* connectors */
+.connector {
+  flex: 0 0 44px;
+  position: relative;
+  align-self: center;
+  height: 20px;
+}
+
+.connector::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  right: 10px;
+  top: 50%;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.connector::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+}
+
+.chain[data-on='true'] .connector::after {
+  width: calc(100% - 14px);
+  transition: width 0.5s var(--ease-out);
+  transition-delay: calc(0.14s + var(--i) * 0.08s);
+}
+
+.connector i {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-right: 1px solid var(--accent);
+  border-top: 1px solid var(--accent);
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.5s var(--ease-out);
+  transition-delay: calc(0.4s + var(--i) * 0.08s);
+}
+
+.chain[data-on='true'] .connector i {
+  opacity: 1;
+  transform: rotate(45deg) translate(0, 0);
+}
+
+/* ------------------------------------------------------------------ index -- */
+
+.skill-index {
+  border-top: 1px solid var(--line);
+}
+
+.skill-row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: clamp(14px, 3vw, 40px);
+  align-items: baseline;
+  padding-block: 20px;
+  border-bottom: 1px solid var(--line);
+  transition: background 0.4s ease, padding-left 0.5s var(--ease-out);
+}
+
+.skill-row:hover {
+  background: var(--accent-soft);
+  padding-left: 12px;
+}
+
+.skill-row dt {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.skill-row dd {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.skill-row dd span {
+  font-size: 15px;
+  color: var(--text-soft);
+  transition: color 0.3s ease, transform 0.4s var(--ease-out);
+}
+
+.skill-row:hover dd span {
+  color: var(--text);
+}
+
+.skills-note {
+  margin-top: 22px;
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 62ch;
+}
+
+.skills-note b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .chain-flow {
+    flex-direction: column;
+    padding-bottom: 20px;
+  }
+
+  .node {
+    min-width: 0;
+  }
+
+  .connector {
+    flex: 0 0 26px;
+    width: 20px;
+    height: 26px;
+    align-self: start;
+    margin-left: 22px;
+  }
+
+  .connector::before {
+    left: 50%;
+    right: auto;
+    top: 4px;
+    bottom: 10px;
+    width: 1px;
+    height: auto;
+  }
+
+  .connector::after {
+    left: 50%;
+    top: 4px;
+    width: 1px;
+    height: 0;
+  }
+
+  .chain[data-on='true'] .connector::after {
+    width: 1px;
+    height: calc(100% - 10px);
+  }
+
+  .connector i {
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: 0;
+    margin: 0 0 0 -3.5px;
+    transform: rotate(135deg);
+  }
+
+  .chain[data-on='true'] .connector i {
+    transform: rotate(135deg) translate(0, 0);
+  }
+}
+
+@media (max-width: 700px) {
+  .skill-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}

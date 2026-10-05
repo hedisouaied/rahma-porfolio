@@ -1,0 +1,193 @@
+/* ==========================================================================
+   Education + languages
+   ========================================================================== */
+
+.edu {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: clamp(24px, 3.4vw, 48px);
+  align-items: start;
+}
+
+.degrees {
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.degree {
+  position: relative;
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: clamp(12px, 2.4vw, 28px);
+  padding-block: 22px;
+  border-bottom: 1px solid var(--line);
+  transition: padding-left 0.5s var(--ease-out), background 0.4s ease;
+}
+
+.degree::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.55s var(--ease-out);
+}
+
+.degree:hover {
+  background: var(--accent-soft);
+  padding-left: 12px;
+}
+
+.degree:hover::after {
+  transform: scaleY(1);
+}
+
+.degree .yr {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  padding-top: 3px;
+}
+
+.degree-body {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.degree-body b {
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.degree-body h3 {
+  font-size: 16.5px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.degree-body p {
+  color: var(--text-muted);
+  font-size: 14.5px;
+}
+
+.degree-body .school {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.degree-body .school i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ------------------------------------------------------------- languages -- */
+
+.langs {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 22px;
+  background: var(--surface);
+  position: sticky;
+  top: 96px;
+}
+
+.langs-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.langs-title b {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.lang {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 14px;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.lang .bar {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 5px;
+}
+
+.lang .bar i {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  transition: background 0.5s var(--ease-out);
+  transition-delay: calc(0.1s + var(--i) * 0.09s);
+}
+
+.lang .bar i[data-on='true'] {
+  background: var(--accent);
+}
+
+.lang > span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.langs-foot {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 960px) {
+  .edu {
+    grid-template-columns: 1fr;
+  }
+
+  .langs {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .degree {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
