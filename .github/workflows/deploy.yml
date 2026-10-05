@@ -18,6 +18,12 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Project sites are served from https://<user>.github.io/<repo>/, so the
+    # built site needs that subpath as its base. Set the repository variable
+    # BASE_PATH to "/" first if a custom domain is ever attached.
+    # Job level so the build and the verification step can never disagree.
+    env:
+      VITE_BASE_PATH: ${{ vars.BASE_PATH || format('/{0}/', github.event.repository.name) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,36 +41,40 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Project sites are served from https://<user>.github.io/<repo>/, so the
-      # built site needs that subpath as its base. Set the repository variable
-      # BASE_PATH to "/" first if a custom domain is ever attached.
       - name: Build
         run: npm run build
-        env:
-          VITE_BASE_PATH: ${{ vars.BASE_PATH || format('/{0}/', github.event.repository.name) }}
 
       - name: Verify the built base path
         run: |
           set -euo pipefail
-          base="${VITE_BASE_PATH}"
+          base="${VITE_BASE_PATH:?VITE_BASE_PATH must be defined at job level}"
           echo "expected base: $base"
+          fail() { echo "FAIL: $1"; exit 1; }
+
           # The base is a URL prefix, not a dist directory: assets stay at dist/assets.
           grep -q "href=\"${base}assets/" dist/index.html \
             || grep -q "src=\"${base}assets/" dist/index.html \
-            || { echo "FAIL: dist/index.html does not reference ${base}assets/"; exit 1; }
+            || fail "dist/index.html does not reference ${base}assets/"
+
           # The CV link is built from import.meta.env.BASE_URL at build time, so the
-          # base must be inlined as a literal in the JS bundle (not left unresolved).
+          # base must be inlined as a literal and never left unresolved.
           grep -q -- "\"${base}\"" dist/assets/*.js \
-            || { echo "FAIL: base ${base} was not inlined into the JS bundle"; exit 1; }
-          grep -q "import.meta.env" dist/assets/*.js \
-            && { echo "FAIL: unresolved import.meta.env left in the bundle"; exit 1; }
-          test -f dist/cv/Rahma-Jlassi-CV.pdf \
-            || { echo "FAIL: dist/cv/Rahma-Jlassi-CV.pdf is missing"; exit 1; }
-          test -f dist/og-image.png \
-            || { echo "FAIL: dist/og-image.png is missing"; exit 1; }
-          test -f dist/.nojekyll \
-            || { echo "FAIL: dist/.nojekyll is missing"; exit 1; }
-          echo "OK: base, CV, og-image and .nojekyll all present"
+            || fail "base ${base} was not inlined into the JS bundle"
+          if grep -q "import.meta.env" dist/assets/*.js; then
+            fail "unresolved import.meta.env left in the bundle"
+          fi
+
+          test -f dist/cv/Rahma-Jlassi-CV.pdf || fail "dist/cv/Rahma-Jlassi-CV.pdf is missing"
+          test -f dist/og-image.png || fail "dist/og-image.png is missing"
+          test -f dist/.nojekyll || fail "dist/.nojekyll is missing"
+
+          # The social card URL must be absolute for crawlers; meta[content] is not
+          # rewritten by Vite, so it lives in index.html as a full URL.
+          grep -q 'og:image' dist/index.html || fail "og:image missing"
+          grep -qE 'og:image"?[[:space:]]*$|content="https://[^"]+og-image\.png"' dist/index.html \
+            || fail "og:image is not an absolute https URL"
+
+          echo "OK: base, CV, og-image, .nojekyll all present"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
