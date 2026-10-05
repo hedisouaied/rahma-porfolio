@@ -22,9 +22,15 @@ export default function Education() {
     const node = root.current
     if (!node) return undefined
 
-    gsap.set('.degree', { opacity: 0, y: 24 })
-    gsap.set('.lang', { opacity: 0, y: 16 })
-    gsap.set('.langs', { opacity: 0, y: 24 })
+    /* Scoped to this component: bare '.degree'/'.lang' selectors are global and
+       would also catch same-named nodes elsewhere. */
+    const degrees = gsap.utils.toArray('.degree', node)
+    const langs = gsap.utils.toArray('.lang', node)
+    const langWrap = node.querySelector('.langs')
+
+    gsap.set(degrees, { opacity: 0, y: 24 })
+    gsap.set(langs, { opacity: 0, y: 16 })
+    gsap.set(langWrap, { opacity: 0, y: 24 })
 
     const timeline = gsap.timeline({
       scrollTrigger: { trigger: node, start: 'top 78%', once: true },
@@ -33,9 +39,9 @@ export default function Education() {
     })
 
     timeline
-      .to('.degree', { opacity: 1, y: 0, duration: 0.85, stagger: 0.1 }, 0)
-      .to('.langs', { opacity: 1, y: 0, duration: 0.8 }, 0.15)
-      .to('.lang', { opacity: 1, y: 0, duration: 0.6, stagger: 0.1 }, 0.3)
+      .to(degrees, { opacity: 1, y: 0, duration: 0.85, stagger: 0.1 }, 0)
+      .to(langWrap, { opacity: 1, y: 0, duration: 0.8 }, 0.15)
+      .to(langs, { opacity: 1, y: 0, duration: 0.6, stagger: 0.1 }, 0.3)
 
     return () => timeline.kill()
   }, [])

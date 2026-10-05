@@ -54,8 +54,10 @@ function useReveals() {
         })
       })
 
-      /* Horizontal rules wipe open as their block arrives. */
-      gsap.utils.toArray('.pao > div, .skill-row, .degree').forEach((node) => {
+      /* Horizontal rules wipe open as their block arrives.
+         `.degree` is deliberately absent: Education.jsx owns its reveal with a
+         timeline, and animating it here as well left it stuck at opacity 0. */
+      gsap.utils.toArray('.pao > div, .skill-row').forEach((node) => {
         gsap.from(node, {
           opacity: 0,
           x: -18,
